@@ -1,8 +1,11 @@
 # wordpress-export-to-markdown
 
-A script that converts a WordPress export XML file into Markdown files suitable for a static site generator ([Gatsby](https://www.gatsbyjs.org/), [Hugo](https://gohugo.io/), [Jekyll](https://jekyllrb.com/), etc.).
+A script that converts a WordPress export XML file into Markdown files suitable for a static site generator ([11ty](https://www.11ty.dev/), [Gatsby](https://www.gatsbyjs.org/), [Hugo](https://gohugo.io/), [Jekyll](https://jekyllrb.com/), etc.).
 
 Each post is saved as a separate Markdown file with appropriate frontmatter. Images are also downloaded and saved. Embedded content from YouTube, Twitter, CodePen, etc. is carefully preserved.
+
+> NOTE: As of v3.0.0 this fork has been modified to provide Author, Tags, Categories, Excerpt, and Wordpress Post ID in the Frontmatter of the exported .md files. 
+> The main reason for these additions is we are migrating from Wordpress to 11ty and having these Frontmatter values is important. 
 
 ![wordpress-export-to-markdown running in a terminal](https://user-images.githubusercontent.com/1245573/72686026-3aa04280-3abe-11ea-92c1-d756a24657dd.gif)
 
@@ -13,6 +16,8 @@ You'll need:
 - Your [WordPress export file](https://wordpress.org/support/article/tools-export-screen/)
 
 It is recommended that you drop your WordPress export file into the same directory that you run this script from so it's easy to find.
+
+> NOTE: Starting at v3.0.0 the script's defaults have been changed for faster development. Name your XML file "posts.xml" and Images have been disabled by default to speed the export.
 
 You can run this script immediately in your terminal with `npx`:
 
@@ -26,7 +31,19 @@ Or you can clone and run (this makes repeated runs faster and allows you to tink
 npm install && node index.js
 ```
 
+> NOTE: Starting at v3.0.0, added the following two scripts to aid with development. Assuming you've accepted the default 'posts' as the output directory, the following will remove the 'posts' directory to provide a clean export.
+
+```
+npm run clean
+```
+
+> NOTE: Then, you can either run `node index.js` or `npm run export` to launch the export wizard.
+
+
+
 Either way you run it, the script will start the wizard. Answer the questions and off you go!
+
+> NOTE: If you want to change the wizard defaults, take a look at the `/src/wizard.js` file and set the *[true,false]* flags accordingly. 
 
 ## Command Line
 
