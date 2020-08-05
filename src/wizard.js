@@ -19,14 +19,14 @@ const options = [
 	{
 		name: 'input',
 		type: 'file',
-		description: 'Path to WordPress export file',
-		default: 'export.xml'
+		description: 'Path to WordPress export file (posts.xml)',
+		default: 'posts.xml'
 	},
 	{
 		name: 'output',
 		type: 'folder',
-		description: 'Path to output folder',
-		default: 'output'
+		description: 'Path to output folder (posts)',
+		default: 'posts'
 	},
 	{
 		name: 'year-folders',
@@ -47,29 +47,36 @@ const options = [
 		aliases: ['postfolders'],
 		type: 'boolean',
 		description: 'Create a folder for each post',
-		default: true
+		default: false
 	},
 	{
 		name: 'prefix-date',
 		aliases: ['prefixdate'],
 		type: 'boolean',
 		description: 'Prefix post folders/files with date',
-		default: false
+		default: true
 	},
 	{
 		name: 'save-attached-images',
 		aliases: ['saveimages'],
 		type: 'boolean',
 		description: 'Save images attached to posts',
-		default: true
+		default: false
 	},
 	{
 		name: 'save-scraped-images',
 		aliases: ['addcontentimages'],
 		type: 'boolean',
 		description: 'Save images scraped from post body content',
-		default: true
-	}
+		default: false
+	},
+  {
+    name: "add-excerpt",
+    aliases: ["addexcerpt"],
+    type: "boolean",
+    description: "Add excerpt to frontmatter",
+    default: true
+  }
 ];
 
 async function getConfig(argv) {

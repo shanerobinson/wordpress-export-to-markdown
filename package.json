@@ -1,9 +1,9 @@
 {
 	"name": "wordpress-export-to-markdown",
-	"version": "2.0.4",
+	"version": "3.0.0",
 	"description": "Converts a WordPress export XML file into Markdown files.",
 	"main": "index.js",
-	"repository": "https://github.com/lonekorean/wordpress-export-to-markdown.git",
+	"repository": "https://github.com/shanerobinson/wordpress-export-to-markdown.git",
 	"keywords": [
 		"blog",
 		"convert",
@@ -12,7 +12,9 @@
 		"wordpress"
 	],
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rimraf posts",
+    "export": "node index.js"
 	},
 	"author": "Will Boyd <will@codersblock.com> (https://codersblock.com)",
 	"license": "MIT",
@@ -21,12 +23,13 @@
 	},
 	"dependencies": {
 		"camelcase": "^6.0.0",
-		"chalk": "^4.0.0",
-		"commander": "^5.0.0",
-		"inquirer": "^7.1.0",
-		"luxon": "^1.23.0",
+		"chalk": "^4.1.0",
+		"commander": "^5.1.0",
+		"inquirer": "^7.3.3",
+		"luxon": "^1.24.1",
 		"request": "^2.88.2",
-		"request-promise-native": "^1.0.8",
+		"request-promise-native": "^1.0.9",
+		"rimraf": "^3.0.2",
 		"turndown": "^6.0.0",
 		"xml2js": "^0.4.23"
 	},

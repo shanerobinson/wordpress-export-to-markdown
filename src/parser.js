@@ -36,22 +36,57 @@ function collectPosts(data, config) {
 	// this is passed into getPostContent() for the markdown conversion
 	const turndownService = translator.initTurndownService();
 
-	const posts = getItemsOfType(data, 'post')
-		.filter(post => post.status[0] !== 'trash' && post.status[0] !== 'draft')
-		.map(post => ({
-			// meta data isn't written to file, but is used to help with other things
-			meta: {
-				id: getPostId(post),
-				slug: getPostSlug(post),
-				coverImageId: getPostCoverImageId(post),
-				imageUrls: []
-			},
-			frontmatter: {
-				title: getPostTitle(post),
-				date: getPostDate(post)
-			},
-			content: translator.getPostContent(post, turndownService, config)
-		}));
+
+// Updated with Tags, Cats, PostID, Excerpt
+    const posts = getItemsOfType(data, "post")
+    .filter(post => post.status[0] !== "trash" && post.status[0] !== "draft")
+    .map(post => {
+      const optionalExcerpt = config.addExcerpt
+        ? { excerpt: getPostExcerpt(post) }
+        : undefined;
+
+      return {
+        // meta data isn't written to file, but is used to help with other things
+        meta: {
+          id: getPostId(post),
+          slug: getPostSlug(post),
+          coverImageId: getPostCoverImageId(post),
+          imageUrls: []
+        },
+        frontmatter: {
+          title: getPostTitle(post),
+          date: getPostDate(post),
+          author: getPostAuthor(post),
+          categories: getCategories(post),
+          tags: getTags(post),
+          wpid: getPostId(post),
+          metadescription: getMetaDescription(post),
+          ...optionalExcerpt
+        },
+        content: translator.getPostContent(post, turndownService, config)
+      };
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	console.log(posts.length + ' posts found.');
 	return posts;
@@ -75,18 +110,70 @@ function getPostCoverImageId(post) {
 	return id;
 }
 
+
+function getMetaDescription(post) {
+	if (post.postmeta === undefined) {
+		return undefined;
+	}
+
+	const postmeta = post.postmeta.find(postmeta => postmeta.meta_key[0] === '_yoast_wpseo_metadesc');
+	const description = postmeta ? postmeta.meta_value[0] : undefined;
+	return description;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function getPostTitle(post) {
 	return post.title[0];
 }
 
 function getPostDate(post) {
-	return luxon.DateTime.fromRFC2822(post.pubDate[0], { zone: 'utc' }).toISODate();
+	return luxon.DateTime.fromRFC2822(post.pubDate[0], { zone: 'utc' }).toISO();
+}
+
+function getPostExcerpt(post) {
+  const excerpt = post.encoded[1].replace(/(\r\n|\n|\r)/gm, " "); 
+  return excerpt;
+}
+
+function getPostAuthor(post) {
+  const author = post.creator[0]; 
+  return author;
+}
+
+function getCategories(post) {
+	return processCategoryTags(post, "category");
+}
+
+function getTags(post) {
+	return processCategoryTags(post, "post_tag");
+}
+
+function processCategoryTags(post, domain) {
+	if (!post.category) {
+		return [];
+	}
+	return post.category
+		.filter(c => c["$"].domain === domain)
+		.map(({ $: c }) => c.nicename);
 }
 
 function collectAttachedImages(data) {
 	const images = getItemsOfType(data, 'attachment')
 		// filter to certain image file types
-		.filter(attachment => (/\.(gif|jpe?g|png)$/i).test(attachment.attachment_url[0]))
+		.filter(attachment => (/\.(gif|jpe?g|png|svg)$/i).test(attachment.attachment_url[0]))
 		.map(attachment => ({
 			id: attachment.post_id[0],
 			postId: attachment.post_parent[0],
@@ -104,7 +191,7 @@ function collectScrapedImages(data) {
 		const postContent = post.encoded[0];
 		const postLink = post.link[0];
 
-		const matches = [...postContent.matchAll(/<img[^>]*src="(.+?\.(?:gif|jpe?g|png))"[^>]*>/gi)];
+		const matches = [...postContent.matchAll(/<img[^>]*src="(.+?\.(?:gif|jpe?g|png|svg))"[^>]*>/gi)];
 		matches.forEach(match => {
 			// base the matched image URL relative to the post URL
 			const url = new URL(match[1], postLink).href;
